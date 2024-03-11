@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Hcode\Model;
 
@@ -6,7 +6,8 @@ use \Hcode\DB\Sql;
 use \Hcode\Model;
 use \Hcode\Model\Cart;
 
-class Order extends Model {
+class Order extends Model
+{
 
 	const SUCCESS = "Order-Success";
 	const ERROR = "Order-Error";
@@ -17,18 +18,17 @@ class Order extends Model {
 		$sql = new Sql();
 
 		$results = $sql->select("CALL sp_orders_save(:idorder, :idcart, :iduser, :idstatus, :idaddress, :vltotal)", [
-			':idorder'=>$this->getidorder(),
-			':idcart'=>$this->getidcart(),
-			':iduser'=>$this->getiduser(),
-			':idstatus'=>$this->getidstatus(),
-			':idaddress'=>$this->getidaddress(),
-			':vltotal'=>$this->getvltotal()
+			':idorder' => $this->getidorder(),
+			':idcart' => $this->getidcart(),
+			':iduser' => $this->getiduser(),
+			':idstatus' => $this->getidstatus(),
+			':idaddress' => $this->getidaddress(),
+			':vltotal' => $this->getvltotal()
 		]);
 
 		if (count($results) > 0) {
 			$this->setData($results[0]);
 		}
-
 	}
 
 	public function get($idorder)
@@ -46,13 +46,12 @@ class Order extends Model {
 			INNER JOIN tb_persons f ON f.idperson = d.idperson
 			WHERE a.idorder = :idorder
 		", [
-			':idorder'=>$idorder
+			':idorder' => $idorder
 		]);
 
 		if (count($results) > 0) {
 			$this->setData($results[0]);
 		}
-
 	}
 
 	public static function listAll()
@@ -70,7 +69,6 @@ class Order extends Model {
 			INNER JOIN tb_persons f ON f.idperson = d.idperson
 			ORDER BY a.dtregister DESC
 		");
-
 	}
 
 	public function delete()
@@ -79,12 +77,11 @@ class Order extends Model {
 		$sql = new Sql();
 
 		$sql->query("DELETE FROM tb_orders WHERE idorder = :idorder", [
-			':idorder'=>$this->getidorder()
+			':idorder' => $this->getidorder()
 		]);
-
 	}
 
-	public function getCart():Cart
+	public function getCart(): Cart
 	{
 
 		$cart = new Cart();
@@ -92,14 +89,12 @@ class Order extends Model {
 		$cart->get((int)$this->getidcart());
 
 		return $cart;
-
 	}
 
 	public static function setError($msg)
 	{
 
 		$_SESSION[Order::ERROR] = $msg;
-
 	}
 
 	public static function getError()
@@ -110,21 +105,18 @@ class Order extends Model {
 		Order::clearError();
 
 		return $msg;
-
 	}
 
 	public static function clearError()
 	{
 
 		$_SESSION[Order::ERROR] = NULL;
-
 	}
 
 	public static function setSuccess($msg)
 	{
 
 		$_SESSION[Order::SUCCESS] = $msg;
-
 	}
 
 	public static function getSuccess()
@@ -135,14 +127,12 @@ class Order extends Model {
 		Order::clearSuccess();
 
 		return $msg;
-
 	}
 
 	public static function clearSuccess()
 	{
 
 		$_SESSION[Order::SUCCESS] = NULL;
-
 	}
 
 	public static function getPage($page = 1, $itemsPerPage = 10)
@@ -167,11 +157,10 @@ class Order extends Model {
 		$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
 		return [
-			'data'=>$results,
-			'total'=>(int)$resultTotal[0]["nrtotal"],
-			'pages'=>ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
+			'data' => $results,
+			'total' => (int)$resultTotal[0]["nrtotal"],
+			'pages' => ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
 		];
-
 	}
 
 	public static function getPageSearch($search, $page = 1, $itemsPerPage = 10)
@@ -193,20 +182,16 @@ class Order extends Model {
 			ORDER BY a.dtregister DESC
 			LIMIT $start, $itemsPerPage;
 		", [
-			':search'=>'%'.$search.'%',
-			':id'=>$search
+			':search' => '%' . $search . '%',
+			':id' => $search
 		]);
 
 		$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
 		return [
-			'data'=>$results,
-			'total'=>(int)$resultTotal[0]["nrtotal"],
-			'pages'=>ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
+			'data' => $results,
+			'total' => (int)$resultTotal[0]["nrtotal"],
+			'pages' => ceil($resultTotal[0]["nrtotal"] / $itemsPerPage)
 		];
-
 	}
-
 }
-
-?>
